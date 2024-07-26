@@ -1,0 +1,83 @@
+
+package bankmanagementsystem;
+
+import javax.swing.* ;
+import java.awt.* ;
+import java.awt.event.* ;
+import java.util.* ;
+
+public class Deposit extends JFrame implements ActionListener {
+    JButton deposit , back ;
+    String pinnumber , cardnumber;
+    JTextField amount ;
+    
+    Deposit(String pinnumber , String cardnumber)
+    {
+        this.pinnumber = pinnumber ;
+        this.cardnumber = cardnumber ;
+        setLayout(null) ;
+     
+     ImageIcon I1 = new ImageIcon(ClassLoader.getSystemResource("icons/atm.jpg")) ;
+     Image I2 = I1.getImage().getScaledInstance(900, 900, Image.SCALE_DEFAULT) ;
+     ImageIcon I3 = new ImageIcon(I2) ;
+     JLabel Image = new JLabel(I3) ;
+     Image.setBounds(0, 0, 900, 900);
+     add(Image) ;
+     
+     JLabel text = new JLabel("Enter The Amount you want to deposit :") ;
+     text.setForeground(Color.WHITE);
+     text.setFont(new Font("System",Font.BOLD,16));
+     text.setBounds(170,300,400,20) ;
+     Image.add(text) ;
+     
+     amount = new JTextField() ;
+     amount.setFont(new Font("Raleway",Font.BOLD,22));
+     amount.setBounds(170,350,320,25);
+     Image.add(amount) ;
+    
+     deposit = new JButton("Deposit") ;
+     deposit.setBounds(355, 485, 150, 30);
+     deposit.addActionListener(this);
+     Image.add(deposit);
+     
+     back = new JButton("Back") ;
+     back.setBounds(355, 520, 150, 30);
+     back.addActionListener(this);
+     Image.add(back) ;
+     
+     setSize(900,900) ;
+     setLocation(900,0) ;
+//     setUndecorated(true) ;
+     setVisible(true) ;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        if(e.getSource() == deposit){
+            String number = amount.getText() ;
+            Date date = new Date() ;
+            if(number.equals("")){
+                JOptionPane.showMessageDialog(null, "Please Enter the Amount you want to deposit");
+            }else{
+                try{
+                Conn conn = new Conn() ;
+                String query = "insert into bank values('"+cardnumber+"','"+pinnumber+"' , '"+date+"' , 'Deposit' , '"+number+"')" ;
+                conn.s.executeUpdate(query) ;
+                JOptionPane.showMessageDialog(null, "Rs "+number+" Deposited Successfully.!") ;
+                setVisible(false) ;
+                new Transactions(pinnumber,cardnumber).setVisible(true);
+                }catch(Exception f){
+                    System.out.println(f);
+                }
+            }
+        }else if(e.getSource() == back){
+            setVisible(false);
+            new Transactions(pinnumber,cardnumber).setVisible(true);
+        }
+    }
+    
+     public static void main(String[] args) {
+        new Deposit("","") ;
+    }
+}
